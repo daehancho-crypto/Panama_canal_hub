@@ -1,105 +1,50 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Panama Canal | ACP Monitor</title>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ACP Intelligence | Owner Operations</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17243b;background:#f4f7fb}
-body{margin:0}header{background:#102b4d;color:#fff;padding:34px 20px}header>div,main{max-width:920px;margin:auto}
-h1{margin:0 0 8px;font-size:28px}main{padding:22px 16px}.card{background:#fff;padding:22px;border-radius:15px;margin-bottom:16px;box-shadow:0 3px 18px #183a5a12}
-h2{font-size:19px;margin-top:0}.muted{color:#52667b;font-size:14px}.pill{display:inline-block;background:#fff0ce;color:#875b00;padding:6px 11px;border-radius:18px;font-size:13px}
-a{color:#1462bd;overflow-wrap:anywhere}li{margin:12px 0}input,select,textarea,button{padding:11px;border:1px solid #b9c6d5;border-radius:8px;font-size:15px;max-width:100%;box-sizing:border-box}
-.controls{display:flex;gap:8px;flex-wrap:wrap}.controls input{flex:1;min-width:180px}.item{padding:14px 0;border-bottom:1px solid #e6ebf1}.item:last-child{border-bottom:0}.item a{font-weight:600}.tag{font-size:12px;color:#4b6078}
-textarea{width:100%;min-height:105px;box-sizing:border-box;border:1px solid #b9c6d5;border-radius:8px;font:inherit}button{background:#1462bd;color:white;border:0;border-radius:8px;cursor:pointer}.secondary{background:#e9f0fa;color:#173456}.hint{background:#f2f6fc;padding:12px;border-radius:8px;font-size:14px}.match{padding:12px 0;border-bottom:1px solid #e6ebf1}</style></head><body>
-<header><div><h1>Panama Canal | ACP Monitor</h1><div>ACP 공식 공지 링크 모니터 · 선주사 운항 참고</div></div></header>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#17273c;background:#f3f6fa}*{box-sizing:border-box}body{margin:0}header{background:#102b4b;color:white;padding:24px 18px}header .wrap,main{max-width:1020px;margin:auto}h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:0 0 8px}p{line-height:1.55}main{padding:20px 14px}.card{background:white;border-radius:14px;padding:20px;margin-bottom:15px;box-shadow:0 3px 14px #1a35500c}.muted{color:#586b7c;font-size:13px}.tag{font-size:12px;color:#54677c}.badge{display:inline-block;background:#edf3f9;border-radius:20px;padding:5px 10px;font-size:12px}.warn{background:#fff1d8;color:#865a05}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:#f4f7fb;border-radius:10px;padding:13px}.metric strong{font-size:23px;display:block}button,input,textarea{font:inherit;border-radius:9px;padding:11px;border:1px solid #bfcbd7}button{background:#1765b5;color:white;border:0;cursor:pointer}button.secondary{background:#e8eff8;color:#183e6a}button:disabled{opacity:.55;cursor:not-allowed}input,textarea{width:100%}textarea{min-height:100px;resize:vertical}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}a{color:#125eac;overflow-wrap:anywhere}.notice{border-top:1px solid #e7edf4;padding:15px 0}.notice:first-child{border-top:0}.notice p{margin:7px 0}.details{background:#f5f8fc;border-radius:9px;padding:12px;margin-top:9px;white-space:pre-wrap;font-size:13px;line-height:1.6}details summary{cursor:pointer;font-weight:650}.hidden{display:none}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}.tabs button{background:#e7edf5;color:#29415e}.tabs button.active{background:#155d9f;color:white}.panel{display:none}.panel.active{display:block}.status{font-size:13px;margin-top:10px;white-space:pre-wrap}.good{color:#167247}.error{color:#ad3737}@media(max-width:560px){.grid{grid-template-columns:1fr 1fr}.card{padding:16px}h1{font-size:22px}}
+</style></head><body>
+<header><div class="wrap"><h1>ACP Intelligence Hub</h1><div>Panama Canal · 선주사 운항 규정 모니터링</div></div></header>
 <main>
-<section class="card"><h2>최신 ACP 공지 · 선주사 검토</h2><p class="muted">최근 공지 후보를 우선 표시합니다. 제목만으로 신규/개정/시행 여부를 확정하지 않습니다. AI 자동 요약은 회사 API 연결 후 활성화됩니다.</p><p class="muted" id="latestStatus">최신 문서 확인 중…</p><div id="latestDocs"></div></section>
-<section class="card"><h2>ACP 규정 질문 · AI 답변</h2><p class="muted">회사 AI API 연결 준비 중입니다. 지금은 질문과 관련 ACP 문서를 모아 ChatGPT에 전달하는 수동 모드로 동작합니다. 회사 API 키를 여기에 입력하지 마세요.</p><textarea id="qaQuestion" placeholder="예: 2026년 11월 LNGC Neopanamax Draft 12.0m 통항 가능 여부와 Booking 조건은?"></textarea><div class="controls" style="margin-top:10px"><button id="qaFind">근거 문서 찾기</button><button id="qaCopy" class="secondary">답변 요청 복사</button></div><p id="qaStatus" class="muted"></p><div id="qaSources"></div></section>
-<section class="card"><span class="pill" id="status">수집 데이터 확인 중…</span><h2 style="margin-top:18px">ACP 공식 자료</h2>
-<p>ACP 공식 페이지에 게시된 PDF 링크를 주기적으로 기록합니다. <strong>목록에 있다고 현재 시행 중인 규정이라는 뜻은 아닙니다.</strong> 실제 효력·적용 선종·시행일·개정 여부는 원문과 ACP에 확인하세요.</p>
-<ul><li><a href="https://pancanal.com/en/maritime-services/advisory-to-shipping/" target="_blank" rel="noopener noreferrer">Advisory to Shipping — 공식 목록</a></li>
-<li><a href="https://pancanal.com/en/maritime-services/notices-to-shipping/" target="_blank" rel="noopener noreferrer">Notices to Shipping — 공식 목록</a></li></ul>
-<p class="muted" id="checked">마지막 수집: 확인 중</p><p class="muted" id="warning"></p></section>
-<section class="card"><h2>운항 상황별 공지 찾기</h2>
-<p class="muted">선종, 흘수, 통항 예정일, 예약 방식과 궁금한 사항을 입력하세요. 무료 키워드 검색으로 관련 공지를 찾아줍니다. <strong>색인된 PDF 본문도 검색하지만, PDF 전체가 아직 색인된 것은 아니며 규정 효력 판정은 하지 않습니다.</strong></p>
-<textarea id="situation" placeholder="예: LNGC Neopanamax, draft 12.0m, 11월 15일 북항 통항 예정. Draft restriction, booking, LoTSA 관련 공지를 찾아줘." aria-label="선박 운항 상황"></textarea>
-<div class="controls" style="margin-top:10px"><button id="findSituation">관련 공지 검색</button><button id="copyAnalysis" class="secondary">AI 분석 질문 복사</button></div>
-<p id="situationStatus" class="muted" aria-live="polite"></p><div id="situationResults"></div>
-<p class="hint">검색 결과는 제목·URL과 색인된 PDF 본문에 기반한 참고 후보입니다. 해당 공지의 시행일·개정/폐지 여부·선박 적용 여부는 ACP PDF 원문과 현지 Agent 확인이 필요합니다. AI 분석은 복사한 질문을 ChatGPT에 직접 붙여넣을 때만 실행됩니다. PDF 색인은 실행당 최대 12건, 문서당 최대 12페이지를 순차 처리합니다.</p></section>
-<details class="card"><summary style="cursor:pointer;font-weight:700">과거 PDF 전체 목록 · 검색 (펼치기)</summary><div style="margin-top:16px"><div class="controls"><input id="search" type="search" placeholder="제목 또는 URL 검색" aria-label="문서 검색">
-<select id="category" aria-label="공지 유형"><option value="">전체 유형</option><option value="advisory">Advisory</option><option value="notices">Notices</option></select></div>
-<p class="muted" id="count"></p><div id="results" aria-live="polite">문서 목록을 불러오는 중…</div></div></details>
-<section class="card"><h2>운항 검토 체크리스트</h2><ul><li>Draft limits / water level restrictions</li><li>Booking rules / LoTSA / transit scheduling</li><li>Transit ETA / navigation safety</li><li>Tolls / effective dates / penalties</li><li>LNGC·LPGC 및 lock class 적용 여부</li></ul>
-<p class="muted">AI 정기 호출 없음. 이 사이트는 자동 번역·법률 효력 판정을 제공하지 않습니다. PDF 본문은 일부 문서부터 제한적으로 색인됩니다. AI 분석은 별도 수동 작업으로만 진행합니다.</p></section>
-</main><script>
-let docs=[];let pdfIndex={};
-
-const topics=[
- {test:/흘수|draft|draught|water level|수위|depth/i,terms:['draft','draught','water level','depth','restriction']},
- {test:/예약|booking|slot|lots?a|auction/i,terms:['booking','slot','auction','lots','reservation']},
- {test:/lng|lpg|gas carrier|가스선/i,terms:['lng','lpg','gas','neopanamax']},
- {test:/통항|transit|navigation|운항|pilot/i,terms:['transit','navigation','pilot','vessel']},
- {test:/요금|toll|fee|penalt/i,terms:['toll','fee','tariff','charge','penalt']},
- {test:/안전|safety|visibility|fog/i,terms:['safety','navigation','visibility','fog']},
- {test:/neopanamax|new panamax|신갑문/i,terms:['neopanamax','new panamax','lock']},
- {test:/panamax|구갑문/i,terms:['panamax','lock']}
-];
-let lastMatches=[];
-function docYear(d){const m=(d.title+' '+d.url).match(/(?:A|ADV|N)[-_ ]?\d{1,2}[-_ ](20\d{2})/i);return m?Number(m[1]):0;}
-function relatedDocs(d){const y=docYear(d);if(!y)return [];const topic=/booking|reservation|slot/i.test(d.title)?/booking|reservation|slot/i:/draft|water/i.test(d.title)?/draft|water/i:/correction|amend|modification/i.test(d.title)?/correction|amend|modification/i:null;if(!topic)return [];return docs.filter(x=>x.url!==d.url&&docYear(x)>=y&&topic.test(x.title)).sort((a,b)=>docYear(b)-docYear(a)).slice(0,3);}
-
-function situationSearch(){
- const raw=document.getElementById('situation').value.trim();
- const status=document.getElementById('situationStatus'),out=document.getElementById('situationResults');
- out.replaceChildren();lastMatches=[];
- if(!raw){status.textContent='선박 상황을 입력해 주세요.';return;}
- if(!docs.length){status.textContent='문서 데이터가 아직 연결되지 않았습니다.';return;}
- const expanded=topics.filter(t=>t.test.test(raw)).flatMap(t=>t.terms);
- const stop=new Set(['the','and','for','with','from','canal','panama','acp','현재','관련','공지','확인','해줘','예정','선박']);
- const words=[...new Set([...expanded,...(raw.toLowerCase().match(/[a-z]{3,}|[가-힣]{2,}/g)||[]).filter(w=>!stop.has(w))])];
- if(!words.length){status.textContent='검색 가능한 주제를 찾지 못했습니다. draft, booking, transit 등 구체적인 항목을 입력해 주세요.';return;}
- lastMatches=docs.map(d=>{const indexed=pdfIndex[d.url];const title=(d.title+' '+d.url).toLowerCase();const body=indexed?.status==='indexed'?(indexed.text||'').toLowerCase():'';const matched=words.filter(w=>title.includes(w)||body.includes(w));const titleMatches=matched.filter(w=>title.includes(w)).length;return {d,score:titleMatches*3+(matched.length-titleMatches),matched,indexed};}).filter(x=>x.score>0).sort((a,b)=>(docYear(b.d)===2026?1:0)-(docYear(a.d)===2026?1:0)||docYear(b.d)-docYear(a.d)||b.score-a.score).slice(0,15);
- status.textContent=lastMatches.length+'개 관련 문서 후보 · 제목/URL 및 색인 완료된 PDF 본문 검색 · 색인 '+Object.values(pdfIndex).filter(x=>x.status==='indexed').length+'건 · 시행 여부 미검증';
- if(!lastMatches.length){out.textContent='일치하는 제목이 없습니다. 아래 전체 문서 검색에서 영어 키워드로 다시 시도하세요.';return;}
- lastMatches.forEach(x=>{const div=document.createElement('div');div.className='match';const a=document.createElement('a');a.href=x.d.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.d.title||'ACP PDF';const meta=document.createElement('div');meta.className='tag';meta.textContent=(x.d.category||'')+' · '+(x.matched.some(w=>(x.d.title+' '+x.d.url).toLowerCase().includes(w))?'제목/URL 일치':'PDF 본문 일치')+' · 검색어: '+x.matched.slice(0,5).join(', ');div.append(a,meta);if(docYear(x.d)&&docYear(x.d)<2026){const old=document.createElement('div');old.className='tag';old.textContent='과거 공지 · 후속 개정 및 현행 적용 여부 확인 필요';div.append(old);}const related=relatedDocs(x.d);if(related.length){const heading=document.createElement('div');heading.className='tag';heading.textContent='유사 주제·후속 문서 후보 (개정·대체 관계 미검증):';div.append(heading);related.forEach(d=>{const line=document.createElement('div');line.className='tag';const link=document.createElement('a');link.href=d.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=d.title;line.append(link);div.append(line);});}if(x.indexed?.status==='indexed'){const badge=document.createElement('div');badge.className='tag';badge.textContent='PDF 본문 색인 완료 · 시행일 표현 '+(x.indexed.effective_date_mentions||[]).length+'개 (효력 검증 아님)';div.append(badge);if(x.indexed.effective_date_mentions?.length){const note=document.createElement('p');note.className='muted';note.textContent='원문 표현 예시: '+x.indexed.effective_date_mentions[0].slice(0,250);div.append(note);}}out.append(div);});
-}
-document.getElementById('findSituation').addEventListener('click',situationSearch);
-document.getElementById('copyAnalysis').addEventListener('click',async()=>{
- const raw=document.getElementById('situation').value.trim();
- if(!raw){document.getElementById('situationStatus').textContent='먼저 운항 상황을 입력해 주세요.';return;}
- const refs=lastMatches.slice(0,8).map(x=>'- '+x.d.title+' '+x.d.url).join('\n');
- const prompt='다음 Panama Canal 선박 운항 상황에 적용 가능한 ACP 공지를 검토해줘. 각 규정의 번호, 원문 인용 근거, 시행일, 개정/폐지 여부, 적용 선종/갑문, Owners/Master/Agent 조치사항을 구분하고 불확실한 사항은 확인 필요로 표시해줘. 아래 링크는 제목 검색 후보일 뿐이며 효력은 검증되지 않았어.\n\n[운항 상황]\n'+raw+'\n\n[관련 문서 후보]\n'+(refs||'아직 검색하지 않음');
- try{await navigator.clipboard.writeText(prompt);document.getElementById('situationStatus').textContent='AI 분석 질문을 복사했습니다. ChatGPT에 붙여넣으세요. (AI 자동 호출 없음)';}
- catch(e){document.getElementById('situationStatus').textContent='자동 복사가 차단되었습니다. Safari 권한을 확인하거나 상황을 직접 복사해 주세요.';}
-});
-
-function latestYear(d){const m=(d.title+' '+d.url).match(/(?:ADV|A|N)[-_ ]?\d{1,2}[-_ ](20\d{2})/i);return m?Number(m[1]):0;}
-function latestNum(d){const m=(d.title+' '+d.url).match(/(?:ADV|A|N)[-_ ]?(\d{1,2})[-_ ]20\d{2}/i);return m?Number(m[1]):0;}
-function latestDocsRender(){const out=document.getElementById('latestDocs');out.replaceChildren();const list=docs.filter(d=>latestYear(d)>=2026).sort((a,b)=>latestYear(b)-latestYear(a)||latestNum(b)-latestNum(a)).slice(0,8);document.getElementById('latestStatus').textContent='최근 공지 '+list.length+'건 · 신규/개정 여부 및 시행일은 원문 검증 필요';list.forEach(d=>{const box=document.createElement('div');box.className='item';const h=document.createElement('strong');h.textContent=d.title||'ACP PDF';box.append(h);const info=document.createElement('p');info.className='tag';info.textContent=(d.category||'')+' · 최초 수집 '+(d.first_seen||'미상').slice(0,10)+' · 원문 검증 전';box.append(info);const ix=pdfIndex[d.url];const p=document.createElement('p');p.className='muted';p.textContent=ix?.status==='indexed'?'PDF 본문 색인 완료 · AI 요약 미생성':'PDF 본문 미색인 · AI 요약 미생성';box.append(p);const a=document.createElement('a');a.href=d.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='공식 PDF 확인';box.append(a);const btn=document.createElement('button');btn.className='secondary';btn.style.marginLeft='10px';btn.textContent='한영 요약·회람 요청 복사';btn.addEventListener('click',async()=>{const q='다음 ACP 공식 PDF를 직접 확인하여 한국어/영어 핵심 요약, 발행일과 시행일 분리, 기존 대비 검증된 변경사항, 적용 선박/갑문, 선주사 운항 영향, Owner/Master/Agent/Charterer 조치, 회사 회람 이메일 초안을 작성해줘. 확인되지 않은 사항은 추정하지 마.\n'+d.title+'\n'+d.url;try{await navigator.clipboard.writeText(q);btn.textContent='복사 완료';}catch(e){btn.textContent='복사 실패 · 브라우저 권한 확인';}});box.append(btn);out.append(box);});}
-function qaMatches(){const q=document.getElementById('qaQuestion').value.trim();if(!q)return [];const terms=topics.filter(t=>t.test.test(q)).flatMap(t=>t.terms);const words=[...new Set([...terms,...(q.toLowerCase().match(/[a-z]{4,}/g)||[])])];return docs.map(d=>({d,score:words.filter(w=>(d.title+' '+d.url+' '+(pdfIndex[d.url]?.text||'')).toLowerCase().includes(w)).length})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||latestYear(b.d)-latestYear(a.d)).slice(0,6).map(x=>x.d);}
-let qaFound=[];document.getElementById('qaFind').addEventListener('click',()=>{qaFound=qaMatches();const out=document.getElementById('qaSources');out.replaceChildren();document.getElementById('qaStatus').textContent=qaFound.length+'건 근거 문서 후보 · AI 직접 답변은 회사 API 연결 후 지원';qaFound.forEach(d=>{const p=document.createElement('p');const a=document.createElement('a');a.href=d.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=d.title;p.append(a);out.append(p);});});document.getElementById('qaCopy').addEventListener('click',async()=>{const q=document.getElementById('qaQuestion').value.trim();if(!q){document.getElementById('qaStatus').textContent='질문을 먼저 입력하세요.';return;}if(!qaFound.length)qaFound=qaMatches();const prompt='아래 운항 질문에 대해 ACP 공식 원문을 직접 확인하고 결론부터 한국어로 답변해줘. 근거 문서번호/조항/URL, 시행일, 적용 선종과 갑문, Owner/Master/Agent 조치, 미확인 사항을 구분하고 숫자와 날짜를 추측하지 마.\n[질문]\n'+q+'\n[참고 문서 후보 - 현행 효력 미검증]\n'+qaFound.map(d=>d.title+' '+d.url).join('\n');try{await navigator.clipboard.writeText(prompt);document.getElementById('qaStatus').textContent='질문 복사 완료 · ChatGPT에 붙여넣어 답변을 받으세요.';}catch(e){document.getElementById('qaStatus').textContent='복사 실패 · 브라우저 권한 확인';}});
-
-const results=document.getElementById('results');
-function render(){
- const q=document.getElementById('search').value.trim().toLowerCase(),c=document.getElementById('category').value;
- const filtered=docs.filter(d=>(!c||d.category===c)&&(!q||(d.title+' '+d.url).toLowerCase().includes(q)));
- document.getElementById('count').textContent=filtered.length+'건 표시 / 총 '+docs.length+'건';
- results.replaceChildren();
- if(!filtered.length){results.textContent='표시할 문서가 없습니다.';return;}
- filtered.slice(0,300).forEach(d=>{
-  const box=document.createElement('div');box.className='item';
-  const a=document.createElement('a');a.href=d.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=d.title||'ACP PDF';
-  const meta=document.createElement('div');meta.className='tag';meta.textContent=(d.category||'')+' · 최초 발견 '+(d.first_seen||'미상').slice(0,10);
-  box.append(a,meta);results.append(box);
- });
- if(filtered.length>300){const p=document.createElement('p');p.textContent='최대 300건만 표시합니다. 검색어를 입력해 주세요.';results.append(p);}
-}
-document.getElementById('search').addEventListener('input',render);
-document.getElementById('category').addEventListener('change',render);
-fetch('./data/acp_pdf_index.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(x=>{pdfIndex=x?.entries||{};}).catch(()=>{});
-fetch('./data/acp_documents.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('수집 데이터 없음');return r.json()}).then(data=>{
- docs=Array.isArray(data.documents)?data.documents.filter(d=>/^https:\/\//.test(d.url||'')):[];
- document.getElementById('status').textContent='수집 데이터 연결됨 · '+docs.length+'건';
- document.getElementById('checked').textContent='마지막 성공 확인(UTC): '+(data.last_successful_check||'미상');
- if(data.warnings?.length)document.getElementById('warning').textContent='일부 출처 확인 실패: '+data.warnings.map(x=>x.source).join(', ');
- render();latestDocsRender();
-}).catch(()=>{document.getElementById('status').textContent='수집 데이터 미생성 또는 연결 실패';document.getElementById('checked').textContent='GitHub Actions에서 ACP Monitor 실행 상태를 확인하세요.';results.textContent='아직 표시할 데이터가 없습니다.';});
+<div class="tabs"><button data-tab="dashboard" class="active">최신 공지</button><button data-tab="qa">규정 AI 질의응답</button><button data-tab="archive">문서 보관함</button><button data-tab="settings">AI 연동 설정</button></div>
+<section id="dashboard" class="panel active">
+<div class="card"><h2>규정 업데이트 현황</h2><div class="grid"><div class="metric"><span class="muted">수집 문서</span><strong id="docCount">—</strong></div><div class="metric"><span class="muted">PDF 본문 색인</span><strong id="pdfCount">—</strong></div><div class="metric"><span class="muted">AI 연결</span><strong id="aiState" style="font-size:15px">미연결</strong></div></div><p id="syncStatus" class="muted">공식 공지 데이터 불러오는 중…</p><p class="muted">목록의 최근 문서는 신규 변경이 확정된 문서가 아닙니다. 최초 기준선 이전 문서와 이후 발견 문서를 구분하며, 실제 시행 여부는 원문 검증이 필요합니다.</p></div>
+<div class="card"><h2>최근 ACP Advisory · Notices</h2><p class="muted">최근 문서를 먼저 보여줍니다. AI 연결 전에는 검증되지 않은 자동 요약을 생성하지 않습니다.</p><div id="latest">로딩 중…</div></div>
+</section>
+<section id="qa" class="panel"><div class="card"><h2>ACP 규정 질문 → 근거 기반 답변</h2><p class="muted">관련 PDF 본문을 우선 검색한 뒤, 연결된 회사 AI 중계 서버에 질문과 출처를 전달합니다. 답변은 규정 효력의 최종 확인을 대체하지 않습니다.</p><textarea id="question" placeholder="예: LNGC Neopanamax, draft 12.0m, 2026년 11월 15일 통항 예정. Booking 및 draft 제한을 알려줘."></textarea><div class="actions"><button id="ask">AI 답변 생성</button><button id="find" class="secondary">관련 근거 확인</button></div><p id="qaStatus" class="status"></p><div id="answer"></div><h3>관련 공식 근거 후보</h3><div id="sources" class="muted">질문을 입력해 주세요.</div></div></section>
+<section id="archive" class="panel"><div class="card"><h2>ACP 문서 보관함</h2><p class="muted">검색·감사를 위한 보조 기능입니다. 기본적으로 전체 1,024개 PDF를 화면에 나열하지 않습니다.</p><input id="archiveQuery" placeholder="문서번호, 제목, Booking, Draft 등 검색"><p id="archiveStatus" class="muted"></p><div id="archiveList"></div><p><a href="https://pancanal.com/en/maritime-services/advisory-to-shipping/" target="_blank" rel="noopener">ACP Advisory 공식 목록</a> · <a href="https://pancanal.com/en/maritime-services/notices-to-shipping/" target="_blank" rel="noopener">ACP Notices 공식 목록</a></p></div></section>
+<section id="settings" class="panel"><div class="card"><h2>회사 AI API 연결</h2><p><span class="badge warn">API 키는 이 사이트에 입력하지 마세요</span></p><p class="muted">이 공개 GitHub Pages는 비밀키를 안전하게 보관할 수 없습니다. 회사가 승인한 HTTPS 중계 서버를 별도로 구축한 뒤 그 주소만 연결합니다. 회사 API가 사내망 전용이라면 회사 내부 중계 서버가 필요합니다.</p><label for="endpoint"><strong>승인된 AI 중계 서버 HTTPS 주소</strong></label><input id="endpoint" type="url" placeholder="https://your-approved-proxy.example.com"><div class="actions"><button id="saveEndpoint">주소 저장 (이 브라우저만)</button><button id="testEndpoint" class="secondary">연결 테스트</button><button id="clearEndpoint" class="secondary">설정 지우기</button></div><p id="endpointStatus" class="status"></p><details><summary>중계 서버 API 계약 (개발자용)</summary><div class="details">GET /health → {"status":"ok"}
+POST /analyze
+요청: {"task":"question"|"notice_summary","question":"...","document":{"title":"...","url":"...","text":"..."},"sources":[{"title":"...","url":"...","text":"..."}]}
+응답: {"answer":"...","citations":[{"title":"...","url":"..."}]}
+서버는 HTTPS, CORS 허용 출처 제한, 인증/접근제어, 요청량 제한, 비밀키 서버 보관을 구현해야 합니다. 이 화면만으로 회사 API가 연결되는 것은 아닙니다.</div></details></div></section>
+</main>
+<script>
+'use strict';
+let docs=[],pdfIndex={};let endpoint=localStorage.getItem('acp_proxy_url')||'';
+const $=id=>document.getElementById(id);
+function year(d){const m=(d.title+' '+d.url).match(/(?:ADV|A|N)[-_ ]?\d{1,2}[-_ ](20\d{2})/i);return m?+m[1]:0}
+function num(d){const m=(d.title+' '+d.url).match(/(?:ADV|A|N)[-_ ]?(\d{1,2})[-_ ]20\d{2}/i);return m?+m[1]:0}
+function ordered(){return [...docs].sort((a,b)=>year(b)-year(a)||num(b)-num(a))}
+function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n}
+function link(d){const a=el('a',d.title||'ACP PDF');a.href=d.url;a.target='_blank';a.rel='noopener noreferrer';return a}
+function connected(){return !!endpoint}
+function aiStatus(){ $('aiState').textContent=connected()?'중계 서버 설정됨':'미연결';$('endpoint').value=endpoint;$('endpointStatus').textContent=connected()?'주소 설정됨 · 연결 및 인증은 별도 테스트 필요':'중계 서버 주소를 설정해 주세요.'}
+function renderLatest(){const out=$('latest');out.replaceChildren();const list=ordered().filter(d=>year(d)>=2026).slice(0,12);if(!list.length){out.textContent='표시할 최근 공지가 없습니다.';return}for(const d of list){const box=el('div',undefined,'notice');box.append(el('h3',d.title||'ACP PDF'));box.append(el('p',(d.category||'')+' · 최초 수집 '+(d.first_seen||'미상').slice(0,10)+' · 발행일/시행일 미검증','tag'));const ix=pdfIndex[d.url];box.append(el('p',ix?.status==='indexed'?'PDF 본문 추출됨 · 검증된 AI 요약 없음':'PDF 본문 미색인 · 요약 대기','muted'));const actions=el('div',undefined,'actions');const a=link(d);a.textContent='공식 PDF';actions.append(a);const b=el('button','이 문서 AI 요약');b.disabled=!connected();b.addEventListener('click',()=>analyzeNotice(d,box));actions.append(b);box.append(actions);if(!connected())box.append(el('p','AI 요약을 사용하려면 회사 중계 서버 연결이 필요합니다.','tag'));out.append(box)}}
+function keywords(q){const t=q.toLowerCase();const terms=(t.match(/[a-z]{3,}|[가-힣]{2,}/g)||[]).filter(w=>!['please','현재','관련','공지','알려줘','확인','예정'].includes(w));if(/흘수|draft|draught/.test(t))terms.push('draft','draught','water');if(/예약|booking|slot|lots?a/.test(t))terms.push('booking','reservation','slot','lots');if(/통항|transit/.test(t))terms.push('transit','navigation');if(/요금|toll|tariff/.test(t))terms.push('toll','tariff');return [...new Set(terms)]}
+function findDocs(q){const terms=keywords(q);return docs.map(d=>{const title=(d.title+' '+d.url).toLowerCase(),body=pdfIndex[d.url]?.status==='indexed'?(pdfIndex[d.url].text||'').toLowerCase():'';const a=terms.filter(w=>title.includes(w)).length,b=terms.filter(w=>body.includes(w)).length;return {d,score:a*3+b}}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||year(b.d)-year(a.d)).slice(0,6).map(x=>x.d)}
+function showSources(list){const out=$('sources');out.replaceChildren();if(!list.length){out.textContent='관련 문서를 찾지 못했습니다. 색인 범위가 제한적일 수 있습니다.';return}list.forEach(d=>{const p=el('p');p.append(link(d));out.append(p)})}
+function validEndpoint(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!u.hash&&!u.search&&u.pathname.replace(/\/$/,'')===''}catch(e){return false}}
+async function callAI(payload){if(!connected())throw Error('회사 AI 중계 서버가 연결되지 않았습니다. 설정 탭에서 HTTPS 주소를 입력하세요.');const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),45000);try{const r=await fetch(endpoint.replace(/\/$/,'')+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:ctrl.signal,credentials:'omit'});if(!r.ok)throw Error('중계 서버 응답 오류: HTTP '+r.status);const data=await r.json();if(typeof data.answer!=='string'||!data.answer.trim())throw Error('응답에 answer 필드가 없습니다.');return data}finally{clearTimeout(timer)}}
+function showAnswer(container,data){container.replaceChildren();container.append(el('h3','AI 답변 · 원문 검증 필요'));container.append(el('div',data.answer,'details'));if(Array.isArray(data.citations)){const p=el('p',undefined,'muted');p.textContent='중계 서버가 반환한 출처: ';container.append(p);data.citations.forEach(c=>{if(!c.url||!/^https:\/\//.test(c.url))return;const a=el('a',c.title||c.url);a.href=c.url;a.target='_blank';a.rel='noopener noreferrer';const line=el('p');line.append(a);container.append(line)})}}
+async function analyzeNotice(d,box){const ix=pdfIndex[d.url];if(ix?.status!=='indexed'){alert('이 PDF는 아직 본문 색인이 되지 않았습니다. 정확한 요약을 위해 먼저 원문 확보가 필요합니다.');return}const result=el('div','AI 요약 생성 중…','details');box.append(result);try{const data=await callAI({task:'notice_summary',document:{title:d.title,url:d.url,text:ix.text},sources:[{title:d.title,url:d.url,text:ix.text}]});showAnswer(result,data)}catch(e){result.textContent='AI 요약 실패: '+e.message}}
+$('ask').addEventListener('click',async()=>{const q=$('question').value.trim();if(!q){$('qaStatus').textContent='질문을 입력하세요.';return}const list=findDocs(q);showSources(list);$('answer').replaceChildren();if(!connected()){$('qaStatus').textContent='AI 미연결: 설정 탭에서 승인된 중계 서버 주소를 연결해 주세요.';return}$('qaStatus').textContent='AI 답변 요청 중…';try{const data=await callAI({task:'question',question:q,sources:list.map(d=>({title:d.title,url:d.url,text:pdfIndex[d.url]?.status==='indexed'?pdfIndex[d.url].text:''}))});showAnswer($('answer'),data);$('qaStatus').textContent='AI 응답 수신 · 현행 효력과 숫자는 공식 PDF 확인 필요'}catch(e){$('qaStatus').textContent='AI 답변 실패: '+e.message}});
+$('find').addEventListener('click',()=>{const q=$('question').value.trim();if(!q){$('qaStatus').textContent='질문을 입력하세요.';return}const list=findDocs(q);showSources(list);$('qaStatus').textContent='관련 문서 후보 '+list.length+'건 · AI 답변이 아닌 검색 결과입니다.'});
+$('saveEndpoint').addEventListener('click',()=>{const value=$('endpoint').value.trim().replace(/\/$/,'');if(!validEndpoint(value)){$('endpointStatus').textContent='HTTPS 서버의 기본 주소만 입력하세요. API 키, 쿼리, 경로는 입력하지 마세요.';return}endpoint=value;localStorage.setItem('acp_proxy_url',endpoint);aiStatus();renderLatest()});
+$('clearEndpoint').addEventListener('click',()=>{endpoint='';localStorage.removeItem('acp_proxy_url');aiStatus();renderLatest()});
+$('testEndpoint').addEventListener('click',async()=>{if(!connected()){$('endpointStatus').textContent='먼저 주소를 저장하세요.';return}$('endpointStatus').textContent='연결 테스트 중…';try{const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),10000);try{const r=await fetch(endpoint+'/health',{signal:ctrl.signal,credentials:'omit'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();$('endpointStatus').textContent=data.status==='ok'?'서버 응답 정상 · 실제 AI 권한은 별도 확인 필요':'서버 응답 확인 · health 상태 확인 필요'}finally{clearTimeout(t)}}catch(e){$('endpointStatus').textContent='연결 실패: '+e.message+' (사내망/CORS/인증 확인 필요)'}});
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))}));
+function renderArchive(){const q=$('archiveQuery').value.trim().toLowerCase(),out=$('archiveList');out.replaceChildren();if(!q){$('archiveStatus').textContent='검색어를 입력하면 결과가 표시됩니다.';return}const list=docs.filter(d=>(d.title+' '+d.url).toLowerCase().includes(q));$('archiveStatus').textContent=list.length+'건 일치 · 최대 40건 표시';list.slice(0,40).forEach(d=>{const p=el('p');p.append(link(d));out.append(p)})}
+$('archiveQuery').addEventListener('input',renderArchive);
+async function load(){try{const [dr,pr]=await Promise.all([fetch('./data/acp_documents.json',{cache:'no-store'}),fetch('./data/acp_pdf_index.json',{cache:'no-store'}).catch(()=>null)]);if(!dr.ok)throw Error('ACP 목록 HTTP '+dr.status);const d=await dr.json();docs=Array.isArray(d.documents)?d.documents.filter(x=>/^https:\/\//.test(x.url||'')):[];if(pr?.ok){const p=await pr.json();pdfIndex=p.entries||{}}$('docCount').textContent=docs.length.toLocaleString();$('pdfCount').textContent=Object.values(pdfIndex).filter(x=>x.status==='indexed').length;$('syncStatus').textContent='마지막 수집 (UTC): '+(d.last_successful_check||'미상')+(d.warnings?.length?' · 일부 출처 확인 오류':'');renderLatest();renderArchive()}catch(e){$('syncStatus').textContent='데이터 로딩 실패: '+e.message;$('latest').textContent='공식 공지 데이터 확인이 필요합니다.'}}
+aiStatus();load();
 </script></body></html>
