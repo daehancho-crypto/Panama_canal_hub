@@ -51,7 +51,7 @@ def main():
     attempted=0
     for d in docs:
         url=d.get("url","")
-        if not url or url in indexed:continue
+        if not url or (url in indexed and indexed[url].get("status")=="indexed"):continue
         if attempted>=MAX_NEW:break
         attempted+=1
         try: indexed[url]=extract(url)
