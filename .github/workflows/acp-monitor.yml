@@ -17,10 +17,10 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install pypdf
       - name: Collect ACP notices
         run: python scripts/collect_acp.py
-      - name: Save changes
+      - name: Index a limited batch of PDF text (no AI)\n        run: python scripts/index_pdfs.py\n      - name: Save changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
