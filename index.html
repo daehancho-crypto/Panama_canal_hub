@@ -83,7 +83,8 @@ function render(){
 }
 document.getElementById('search').addEventListener('input',render);
 document.getElementById('category').addEventListener('change',render);
-fetch('./data/acp_pdf_index.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(x=>{pdfIndex=x?.entries||{};}).catch(()=>{});\nfetch('./data/acp_documents.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('수집 데이터 없음');return r.json()}).then(data=>{
+fetch('./data/acp_pdf_index.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(x=>{pdfIndex=x?.entries||{};}).catch(()=>{});
+fetch('./data/acp_documents.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('수집 데이터 없음');return r.json()}).then(data=>{
  docs=Array.isArray(data.documents)?data.documents.filter(d=>/^https:\/\//.test(d.url||'')):[];
  document.getElementById('status').textContent='수집 데이터 연결됨 · '+docs.length+'건';
  document.getElementById('checked').textContent='마지막 성공 확인(UTC): '+(data.last_successful_check||'미상');
