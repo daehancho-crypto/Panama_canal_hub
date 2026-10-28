@@ -17,18 +17,18 @@ textarea{width:100%;min-height:105px;box-sizing:border-box;border:1px solid #b9c
 <li><a href="https://pancanal.com/en/maritime-services/notices-to-shipping/" target="_blank" rel="noopener noreferrer">Notices to Shipping — 공식 목록</a></li></ul>
 <p class="muted" id="checked">마지막 수집: 확인 중</p><p class="muted" id="warning"></p></section>
 <section class="card"><h2>운항 상황별 공지 찾기</h2>
-<p class="muted">선종, 흘수, 통항 예정일, 예약 방식과 궁금한 사항을 입력하세요. 무료 키워드 검색으로 관련 공지를 찾아줍니다. <strong>현재는 PDF 본문 분석이나 규정 효력 판정이 아닙니다.</strong></p>
+<p class="muted">선종, 흘수, 통항 예정일, 예약 방식과 궁금한 사항을 입력하세요. 무료 키워드 검색으로 관련 공지를 찾아줍니다. <strong>색인된 PDF 본문도 검색하지만, PDF 전체가 아직 색인된 것은 아니며 규정 효력 판정은 하지 않습니다.</strong></p>
 <textarea id="situation" placeholder="예: LNGC Neopanamax, draft 12.0m, 11월 15일 북항 통항 예정. Draft restriction, booking, LoTSA 관련 공지를 찾아줘." aria-label="선박 운항 상황"></textarea>
 <div class="controls" style="margin-top:10px"><button id="findSituation">관련 공지 검색</button><button id="copyAnalysis" class="secondary">AI 분석 질문 복사</button></div>
 <p id="situationStatus" class="muted" aria-live="polite"></p><div id="situationResults"></div>
-<p class="hint">검색 결과는 문서 제목과 URL에 기반한 참고 후보입니다. 해당 공지의 시행일·개정/폐지 여부·선박 적용 여부는 ACP PDF 원문과 현지 Agent 확인이 필요합니다. AI 분석은 복사한 질문을 ChatGPT에 직접 붙여넣을 때만 실행됩니다.</p></section>
+<p class="hint">검색 결과는 제목·URL과 색인된 PDF 본문에 기반한 참고 후보입니다. 해당 공지의 시행일·개정/폐지 여부·선박 적용 여부는 ACP PDF 원문과 현지 Agent 확인이 필요합니다. AI 분석은 복사한 질문을 ChatGPT에 직접 붙여넣을 때만 실행됩니다. PDF 색인은 실행당 최대 12건, 문서당 최대 12페이지를 순차 처리합니다.</p></section>
 <section class="card"><h2>수집된 PDF 문서</h2><div class="controls"><input id="search" type="search" placeholder="제목 또는 URL 검색" aria-label="문서 검색">
 <select id="category" aria-label="공지 유형"><option value="">전체 유형</option><option value="advisory">Advisory</option><option value="notices">Notices</option></select></div>
 <p class="muted" id="count"></p><div id="results" aria-live="polite">문서 목록을 불러오는 중…</div></section>
 <section class="card"><h2>운항 검토 체크리스트</h2><ul><li>Draft limits / water level restrictions</li><li>Booking rules / LoTSA / transit scheduling</li><li>Transit ETA / navigation safety</li><li>Tolls / effective dates / penalties</li><li>LNGC·LPGC 및 lock class 적용 여부</li></ul>
-<p class="muted">AI 정기 호출 없음. 이 사이트는 자동 번역·법률 효력 판정·PDF 본문 분석을 제공하지 않습니다. AI 분석은 별도 수동 작업으로만 진행합니다.</p></section>
+<p class="muted">AI 정기 호출 없음. 이 사이트는 자동 번역·법률 효력 판정을 제공하지 않습니다. PDF 본문은 일부 문서부터 제한적으로 색인됩니다. AI 분석은 별도 수동 작업으로만 진행합니다.</p></section>
 </main><script>
-let docs=[];
+let docs=[];let pdfIndex={};
 
 const topics=[
  {test:/흘수|draft|draught|water level|수위|depth/i,terms:['draft','draught','water level','depth','restriction']},
@@ -51,10 +51,10 @@ function situationSearch(){
  const stop=new Set(['the','and','for','with','from','canal','panama','acp','현재','관련','공지','확인','해줘','예정','선박']);
  const words=[...new Set([...expanded,...(raw.toLowerCase().match(/[a-z]{3,}|[가-힣]{2,}/g)||[]).filter(w=>!stop.has(w))])];
  if(!words.length){status.textContent='검색 가능한 주제를 찾지 못했습니다. draft, booking, transit 등 구체적인 항목을 입력해 주세요.';return;}
- lastMatches=docs.map(d=>{const hay=(d.title+' '+d.url).toLowerCase();const matched=words.filter(w=>hay.includes(w));return {d,score:matched.length,matched};}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||String(b.d.first_seen||'').localeCompare(String(a.d.first_seen||''))).slice(0,15);
- status.textContent=lastMatches.length+'개 관련 문서 후보 · 제목/URL 키워드 기반 · 시행 여부 미검증';
+ lastMatches=docs.map(d=>{const indexed=pdfIndex[d.url];const title=(d.title+' '+d.url).toLowerCase();const body=indexed?.status==='indexed'?(indexed.text||'').toLowerCase():'';const matched=words.filter(w=>title.includes(w)||body.includes(w));const titleMatches=matched.filter(w=>title.includes(w)).length;return {d,score:titleMatches*3+(matched.length-titleMatches),matched,indexed};}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||String(b.d.first_seen||'').localeCompare(String(a.d.first_seen||''))).slice(0,15);
+ status.textContent=lastMatches.length+'개 관련 문서 후보 · 제목/URL 및 색인 완료된 PDF 본문 검색 · 색인 '+Object.values(pdfIndex).filter(x=>x.status==='indexed').length+'건 · 시행 여부 미검증';
  if(!lastMatches.length){out.textContent='일치하는 제목이 없습니다. 아래 전체 문서 검색에서 영어 키워드로 다시 시도하세요.';return;}
- lastMatches.forEach(x=>{const div=document.createElement('div');div.className='match';const a=document.createElement('a');a.href=x.d.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.d.title||'ACP PDF';const meta=document.createElement('div');meta.className='tag';meta.textContent=(x.d.category||'')+' · 검색어 일치: '+x.matched.slice(0,5).join(', ');div.append(a,meta);out.append(div);});
+ lastMatches.forEach(x=>{const div=document.createElement('div');div.className='match';const a=document.createElement('a');a.href=x.d.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.d.title||'ACP PDF';const meta=document.createElement('div');meta.className='tag';meta.textContent=(x.d.category||'')+' · 검색어 일치: '+x.matched.slice(0,5).join(', ');div.append(a,meta);if(x.indexed?.status==='indexed'){const badge=document.createElement('div');badge.className='tag';badge.textContent='PDF 본문 색인 완료 · 시행일 표현 '+(x.indexed.effective_date_mentions||[]).length+'개 (효력 검증 아님)';div.append(badge);if(x.indexed.effective_date_mentions?.length){const note=document.createElement('p');note.className='muted';note.textContent='원문 표현 예시: '+x.indexed.effective_date_mentions[0].slice(0,250);div.append(note);}}out.append(div);});
 }
 document.getElementById('findSituation').addEventListener('click',situationSearch);
 document.getElementById('copyAnalysis').addEventListener('click',async()=>{
@@ -83,7 +83,7 @@ function render(){
 }
 document.getElementById('search').addEventListener('input',render);
 document.getElementById('category').addEventListener('change',render);
-fetch('./data/acp_documents.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('수집 데이터 없음');return r.json()}).then(data=>{
+fetch('./data/acp_pdf_index.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(x=>{pdfIndex=x?.entries||{};}).catch(()=>{});\nfetch('./data/acp_documents.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('수집 데이터 없음');return r.json()}).then(data=>{
  docs=Array.isArray(data.documents)?data.documents.filter(d=>/^https:\/\//.test(d.url||'')):[];
  document.getElementById('status').textContent='수집 데이터 연결됨 · '+docs.length+'건';
  document.getElementById('checked').textContent='마지막 성공 확인(UTC): '+(data.last_successful_check||'미상');
