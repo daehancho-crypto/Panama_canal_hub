@@ -3,9 +3,15 @@
     "advisory": "https://pancanal.com/en/maritime-services/advisory-to-shipping/",
     "notices": "https://pancanal.com/en/maritime-services/notices-to-shipping/"
   },
-  "last_successful_check": "2026-10-30T13:00:42.502939+00:00",
+  "last_successful_check": "2026-10-30T18:53:37.023898+00:00",
   "warnings": [],
   "documents": [
+    {
+      "url": "https://pancanal.com/wp-content/uploads/2026/10/ADV-40-2026-Updated-NetZero-Slot-Eligibility-Requirements.pdf",
+      "title": "A-40-2026 Updated NetZero Slot Eligibility Requirements for First-Time Transit Vessels and Modifications to the Transit Reservation (Booking) System",
+      "category": "advisory",
+      "first_seen": "2026-10-30T18:53:37.023898+00:00"
+    },
     {
       "url": "https://pancanal.com/wp-content/uploads/2026/10/ADV-39-2026-Modifications-to-the-Transit-Reservation-Booking-System.pdf",
       "title": "A-39-2026 Modifications to the Transit Reservation (Booking) System",
