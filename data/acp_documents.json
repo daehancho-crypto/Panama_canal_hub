@@ -3,9 +3,15 @@
     "advisory": "https://pancanal.com/en/maritime-services/advisory-to-shipping/",
     "notices": "https://pancanal.com/en/maritime-services/notices-to-shipping/"
   },
-  "last_successful_check": "2026-11-26T19:07:34.675264+00:00",
+  "last_successful_check": "2026-11-27T01:28:15.308485+00:00",
   "warnings": [],
   "documents": [
+    {
+      "url": "https://pancanal.com/wp-content/uploads/2026/11/Advisory-LoTSA-Panamax-Second-Round.pdf",
+      "title": "A-43-2026 Second Round – Long-Term Slot Allocation (LoTSA) Panamax Auction",
+      "category": "advisory",
+      "first_seen": "2026-11-27T01:28:15.308485+00:00"
+    },
     {
       "url": "https://pancanal.com/wp-content/uploads/2026/11/ADV-42-2026-Increase-in-the-Number-of-Booking-Slots-at-the-Panamax-Locks-and-in-the-Maximum-Allowable-Draft-at-the-Neopanamax-Locks-.pdf",
       "title": "A-42-2026 Increase in the Number of Booking Slots at the Panamax Locks and in the Maximum Allowable Draft at the Neopanamax Locks",
